@@ -20,69 +20,77 @@ class JournalApp:
 
     def _create_widgets(self):
         def lbl(frm, txt, r, c, **kwargs):
-            tk.Label(frm, text=txt, font=("Inter", 10), bg="#ffffff", **kwargs).grid(row=r, column=c, sticky="w", pady=5)
+            tk.Label(frm, text=txt, font=("Segoe UI", 10), bg="#ffffff", fg="#444", **kwargs).grid(row=r, column=c, sticky="w", pady=5)
 
-        input_frame = tk.Frame(self.master, bg="#ffffff", padx=10, pady=10)
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure("TButton", font=("Segoe UI", 10, "bold"), padding=6, background="#e0e0e0", foreground="#333")
+        style.configure("Treeview.Heading", font=("Segoe UI", 10, "bold"), background="#dfe6e9", foreground="#2d3436")
+        style.configure("Treeview", font=("Segoe UI", 10), rowheight=26, background="#ffffff", fieldbackground="#ffffff", foreground="#2d3436")
+        style.map("Treeview", background=[("selected", "#74b9ff")])
+
+        input_frame = tk.Frame(self.master, bg="#ffffff", padx=12, pady=12)
         input_frame.pack(side="left", fill="both", expand=False, padx=10, pady=10)
         input_frame.grid_columnconfigure(1, weight=1)
 
-        tk.Label(input_frame, text="Journal Entry", font=("Inter", 16, "bold"), bg="#ffffff", fg="#333").grid(row=0, column=0, columnspan=2, pady=(0, 15))
+        tk.Label(input_frame, text="📝 Journal Entry", font=("Segoe UI", 16, "bold"), bg="#ffffff", fg="#2d3436").grid(row=0, column=0, columnspan=2, pady=(0, 20))
 
         lbl(input_frame, "Title:", 1, 0)
-        self.title_entry = tk.Entry(input_frame, font=("Inter", 10))
-        self.title_entry.grid(row=1, column=1, sticky="ew")
+        self.title_entry = tk.Entry(input_frame, font=("Segoe UI", 10))
+        self.title_entry.grid(row=1, column=1, sticky="ew", ipady=3)
 
         lbl(input_frame, "Date (YYYY-MM-DD):", 2, 0)
-        self.date_entry = tk.Entry(input_frame, font=("Inter", 10))
-        self.date_entry.grid(row=2, column=1, sticky="ew")
+        self.date_entry = tk.Entry(input_frame, font=("Segoe UI", 10))
+        self.date_entry.grid(row=2, column=1, sticky="ew", ipady=3)
         self.date_entry.insert(0, date.today().strftime("%Y-%m-%d"))
 
         lbl(input_frame, "Tags (comma-separated):", 3, 0)
-        self.tags_entry = tk.Entry(input_frame, font=("Inter", 10))
-        self.tags_entry.grid(row=3, column=1, sticky="ew")
+        self.tags_entry = tk.Entry(input_frame, font=("Segoe UI", 10))
+        self.tags_entry.grid(row=3, column=1, sticky="ew", ipady=3)
 
         lbl(input_frame, "Content:", 4, 0)
-        self.content_text = scrolledtext.ScrolledText(input_frame, wrap="word", font=("Inter", 10), height=15)
+        self.content_text = scrolledtext.ScrolledText(input_frame, wrap="word", font=("Segoe UI", 10), height=12, borderwidth=1, relief="solid")
         self.content_text.grid(row=4, column=1, sticky="nsew")
         input_frame.grid_rowconfigure(4, weight=1)
 
         button_frame = tk.Frame(input_frame, bg="#ffffff")
-        button_frame.grid(row=5, column=0, columnspan=2, pady=15)
-        for txt, cmd, bg in [("Save Entry", self._save_entry, "#4CAF50"),
-                             ("New Entry", self._clear_fields, "#2196F3"),
-                             ("Delete Entry", self._delete_entry, "#f44336")]:
-            tk.Button(button_frame, text=txt, command=cmd, font=("Inter", 10, "bold"), bg=bg, fg="white", cursor="hand2").pack(side="left", padx=5)
+        button_frame.grid(row=5, column=0, columnspan=2, pady=20)
+        for txt, cmd, bg in [("📀 Save Entry", self._save_entry, "#4CAF50"),
+                             ("🆕 New Entry", self._clear_fields, "#2196F3"),
+                             ("🗑️ Delete Entry", self._delete_entry, "#f44336")]:
+            tk.Button(button_frame, text=txt, command=cmd, font=("Segoe UI", 10, "bold"), bg=bg, fg="white", activebackground="#333", relief="flat", padx=10, pady=6, cursor="hand2").pack(side="left", padx=6)
 
-        list_frame = tk.Frame(self.master, bg="#ffffff", padx=10, pady=10)
+        list_frame = tk.Frame(self.master, bg="#ffffff", padx=12, pady=12)
         list_frame.pack(side="right", fill="both", expand=True, padx=10, pady=10)
         list_frame.grid_rowconfigure(4, weight=1)
 
-        tk.Label(list_frame, text="Your Entries", font=("Inter", 16, "bold"), bg="#ffffff").grid(row=0, column=0, columnspan=2, pady=(0, 15))
+        tk.Label(list_frame, text="📚 Your Entries", font=("Segoe UI", 16, "bold"), bg="#ffffff", fg="#2d3436").grid(row=0, column=0, columnspan=2, pady=(0, 20))
 
-        for r, txt in enumerate(["Search :", "Search Tags:"], 1):
+        for r, txt in enumerate(["🔍 Search Title/Content:", "🏷️ Search Tags:"], 1):
             lbl(list_frame, txt, r, 0)
-        self.search_keyword_entry = tk.Entry(list_frame, font=("Inter", 10))
-        self.search_keyword_entry.grid(row=1, column=1, sticky="ew")
-        self.search_tags_entry = tk.Entry(list_frame, font=("Inter", 10))
-        self.search_tags_entry.grid(row=2, column=1, sticky="ew")
+        self.search_keyword_entry = tk.Entry(list_frame, font=("Segoe UI", 10))
+        self.search_keyword_entry.grid(row=1, column=1, sticky="ew", ipady=3)
+        self.search_tags_entry = tk.Entry(list_frame, font=("Segoe UI", 10))
+        self.search_tags_entry.grid(row=2, column=1, sticky="ew", ipady=3)
 
         search_frame = tk.Frame(list_frame, bg="#ffffff")
         search_frame.grid(row=3, column=0, columnspan=2, pady=(10, 0))
         for txt, cmd, bg, fg in [("Search", self._load_entries, "#009688", "white"),
                                  ("Clear Search", self._clear_search_fields, "#FFC107", "#333")]:
-            tk.Button(search_frame, text=txt, command=cmd, font=("Inter", 10, "bold"), bg=bg, fg=fg, cursor="hand2").pack(side="left", padx=5)
+            tk.Button(search_frame, text=txt, command=cmd, font=("Segoe UI", 10, "bold"), bg=bg, fg=fg, padx=10, pady=6, relief="flat", cursor="hand2").pack(side="left", padx=5)
 
         self.entry_tree = ttk.Treeview(list_frame, columns=("Date", "Title", "Tags"), show="headings")
-        
+
         for col in ("Date", "Title", "Tags"):
             self.entry_tree.heading(col, text=col)
+            self.entry_tree.column(col, anchor="center")
+
         self.entry_tree.grid(row=4, column=0, columnspan=2, sticky="nsew", pady=10)
 
         scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.entry_tree.yview)
         scrollbar.grid(row=4, column=2, sticky="ns")
         self.entry_tree.configure(yscrollcommand=scrollbar.set)
         self.entry_tree.bind("<<TreeviewSelect>>", self._on_entry_select)
-
 
     def _validate_date(self, date_str):
         try:
